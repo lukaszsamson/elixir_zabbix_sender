@@ -45,7 +45,7 @@ defmodule ZabbixSender.MixProject do
 
   defp package do
     [
-      name: :cashaddr,
+      name: :zabbix_sender,
       files: ["lib", "mix.exs", ".formatter.exs", "README*", "LICENSE*"],
       maintainers: ["Łukasz Samson"],
       licenses: ["MIT"],
