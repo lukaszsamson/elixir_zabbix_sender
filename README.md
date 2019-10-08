@@ -47,5 +47,5 @@ Docs can be found at [https://hexdocs.pm/zabbix_sender](https://hexdocs.pm/zabbi
 
 ## License
 
-CashAddr source code is released under MIT License.
+ZabbixSender source code is released under MIT License.
 Check LICENSE file for more information.
