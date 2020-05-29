@@ -20,6 +20,15 @@ defmodule ZabbixSender.MixProject do
         main: "readme",
         source_ref: "v#{@version}",
         source_url: @source_url
+      ],
+      dialyzer: [
+        flags: [
+          # :unmatched_returns,
+          :unknown,
+          :error_handling,
+          :race_conditions,
+          :underspecs
+        ]
       ]
     ]
   end
@@ -33,7 +42,8 @@ defmodule ZabbixSender.MixProject do
   defp deps do
     [
       {:jason, "~> 1.0"},
-      {:ex_doc, "~> 0.19", only: :dev}
+      {:ex_doc, "~> 0.19", only: :dev},
+      {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false}
     ]
   end
 
