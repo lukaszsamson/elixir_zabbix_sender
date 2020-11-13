@@ -41,6 +41,10 @@ do
 end
 ```
 
+## Known issues
+
+Currently TLS encryption (both PSK and RSA) is not supported and there are no plans for it. A PR would be welcome though.
+
 ## Documentation
 
 Docs can be found at [https://hexdocs.pm/zabbix_sender](https://hexdocs.pm/zabbix_sender).
