@@ -18,8 +18,14 @@ defmodule ZabbixSender do
       end
   """
 
+  alias ZabbixSender.{
+    Protocol,
+    Serializer
+  }
+
   @doc ~S"""
-  Sends binary message to zabbix trapper endpoint and receives response
+  Sends binary message to zabbix trapper endpoint and receives response.
+  Returns binary response or an error.
 
   ## Examples
       iex> ZabbixSender.send(<<>>, "localhost", 12345)
@@ -42,6 +48,28 @@ defmodule ZabbixSender do
 
       {:error, reason} ->
         {:error, reason}
+    end
+  end
+
+  @doc ~S"""
+  Sends values collection to zabbix trapper endpoint and receives response.
+  Returns deserialized response or an error.
+
+  ## Examples
+      iex> ZabbixSender.send_values([%{"key" => "value"}], 123412, "localhost", 12345)
+      {:error, :econnrefused}
+  """
+  @spec send_values(nonempty_list(), pos_integer(), String.t(), integer) ::
+          {:ok, Protocol.response_t()} | {:error, any}
+  def send_values(values, timestamp, host, port) do
+    serialized_message =
+      values
+      |> Protocol.encode_request(timestamp)
+      |> Serializer.serialize()
+
+    with {:ok, response} <- ZabbixSender.send(serialized_message, host, port),
+         {:ok, deserialized} <- Serializer.deserialize(response) do
+      Protocol.decode_response(deserialized)
     end
   end
 end

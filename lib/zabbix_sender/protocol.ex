@@ -12,11 +12,11 @@ defmodule ZabbixSender.Protocol do
       iex> ZabbixSender.Protocol.value("localhost", "key", 23, nil)
       %{host: "localhost", key: "key", value: "23"}
   """
-  @spec value(String.t(), String.t(), any, integer | nil) :: %{
+  @spec value(String.t(), String.t(), any, pos_integer | nil) :: %{
           :host => String.t(),
           :key => String.t(),
           :value => String.t(),
-          optional(:clock) => integer
+          optional(:clock) => pos_integer
         }
   def value(hostname, key, value, nil) do
     %{host: hostname, key: key, value: "#{value}"}
@@ -30,21 +30,31 @@ defmodule ZabbixSender.Protocol do
   Encodes zabbix sender data request.
 
   ## Examples
-      iex> ZabbixSender.Protocol.encode_request([], 1570451084)
-      %{clock: 1570451084, data: [], request: "sender data"}
+      iex> ZabbixSender.Protocol.encode_request([%{"key" => "value"}], 1570451084)
+      %{clock: 1570451084, data: [%{"key" => "value"}], request: "sender data"}
   """
-  @spec encode_request(list(), integer) :: %{
+  @spec encode_request(nonempty_list(), pos_integer) :: %{
           :request => String.t(),
           :data => list(),
-          :clock => integer
+          :clock => pos_integer
         }
-  def encode_request(data, timestamp) do
+  def encode_request(data = [_ | _], timestamp) do
     %{
       request: "sender data",
       data: data,
       clock: timestamp
     }
   end
+
+  @typedoc """
+  Response from Zabbix Server
+  """
+  @type response_t :: %{
+          failed: non_neg_integer,
+          processed: non_neg_integer,
+          seconds_spent: number,
+          total: pos_integer
+        }
 
   @doc ~S"""
   Decodes zabbix sender data response.
@@ -59,7 +69,7 @@ defmodule ZabbixSender.Protocol do
   """
   @spec decode_response(map) ::
           {:error, :unexpected_response}
-          | {:ok, %{failed: integer, processed: integer, seconds_spent: number, total: integer}}
+          | {:ok, response_t()}
   def decode_response(%{"response" => "success", "info" => info}) do
     info_parts =
       info
