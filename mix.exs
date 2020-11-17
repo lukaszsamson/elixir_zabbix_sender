@@ -1,7 +1,7 @@
 defmodule ZabbixSender.MixProject do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.1.0"
   @source_url "https://github.com/lukaszsamson/elixir_zabbix_sender"
 
   def project do
@@ -26,8 +26,8 @@ defmodule ZabbixSender.MixProject do
           # :unmatched_returns,
           :unknown,
           :error_handling,
-          :race_conditions,
-          :underspecs
+          :race_conditions
+          # :underspecs
         ]
       ]
     ]
@@ -35,7 +35,7 @@ defmodule ZabbixSender.MixProject do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    []
+    [extra_applications: [:logger]]
   end
 
   # Run "mix help deps" to learn about dependencies.
@@ -43,7 +43,8 @@ defmodule ZabbixSender.MixProject do
     [
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.19", only: :dev},
-      {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false},
+      {:mock, "~> 0.3", only: :test}
     ]
   end
 
