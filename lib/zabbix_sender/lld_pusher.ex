@@ -31,14 +31,6 @@ defmodule ZabbixSender.LLDPusher do
 
   @retry_interval 5_000
 
-  def child_spec(init_arg) do
-    %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, [init_arg]},
-      restart: :temporary
-    }
-  end
-
   def start_link(args) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
@@ -50,14 +42,16 @@ defmodule ZabbixSender.LLDPusher do
     {:ok,
      %{
        llds_provider: args |> Keyword.fetch!(:llds_provider),
-       config_provider: args |> Keyword.fetch!(:config_provider)
+       config_provider: args |> Keyword.fetch!(:config_provider),
+       interval: args |> Keyword.get(:interval, :infinity)
      }}
   end
 
   @impl GenServer
   def handle_info(
         :push,
-        %{llds_provider: llds_provider, config_provider: config_provider} = state
+        %{llds_provider: llds_provider, config_provider: config_provider, interval: interval} =
+          state
       ) do
     llds = llds_provider.()
     config = config_provider.()
@@ -83,12 +77,16 @@ defmodule ZabbixSender.LLDPusher do
          ) do
       {:ok, %{failed: 0, total: ^total}} ->
         Logger.info("Zabbix LLD pushed")
-        {:stop, :normal, state}
+
+        unless interval == :infinity do
+          Process.send_after(self(), :push, Enum.random(0..(2 * interval)))
+        end
 
       o ->
         Logger.error("Zabbix LLD push failed: #{inspect(o)}")
         Process.send_after(self(), :push, Enum.random(0..(2 * @retry_interval)))
-        {:noreply, state}
     end
+
+    {:noreply, state}
   end
 end

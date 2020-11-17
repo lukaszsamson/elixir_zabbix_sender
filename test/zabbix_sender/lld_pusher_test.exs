@@ -15,9 +15,12 @@ defmodule ZabbixSender.LLDPusherTest do
     ]
   end
 
-  test "sends lld and exits" do
+  test "sends lld" do
+    test_pid = self()
+
     with_mock ZabbixSender, [:passthrough],
       send: fn msg, "example.com", 1234 ->
+        send(test_pid, :ok)
         {:ok, deserialized} = Serializer.deserialize(msg)
 
         assert [
@@ -35,16 +38,13 @@ defmodule ZabbixSender.LLDPusherTest do
            info: "processed: 1; failed: 0; total: 1; seconds spent: 0.000055"
          })}
       end do
-      {:ok, pid} =
+      {:ok, _pid} =
         ZabbixSender.LLDPusher.start_link(
           llds_provider: &__MODULE__.llds/0,
           config_provider: &__MODULE__.config/0
         )
 
-      Process.unlink(pid)
-      Process.monitor(pid)
-
-      assert_receive {:DOWN, _, :process, ^pid, :normal}
+      assert_receive :ok
     end
   end
 end
