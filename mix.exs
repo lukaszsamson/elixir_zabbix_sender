@@ -1,7 +1,7 @@
 defmodule ZabbixSender.MixProject do
   use Mix.Project
 
-  @version "1.1.1"
+  @version "1.1.2"
   @source_url "https://github.com/lukaszsamson/elixir_zabbix_sender"
 
   def project do
@@ -43,7 +43,7 @@ defmodule ZabbixSender.MixProject do
     [
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.19", only: :dev},
-      {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:mock, "~> 0.3", only: :test}
     ]
   end
