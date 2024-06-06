@@ -33,7 +33,7 @@ defmodule ZabbixSender do
   """
   @spec send(binary, String.t(), integer) :: {:ok, binary} | {:error, any}
   def send(msg, host, port) do
-    case :gen_tcp.connect('#{host}', port, active: false) do
+    case :gen_tcp.connect(~c"#{host}", port, active: false) do
       {:ok, sock} ->
         result =
           with :ok <- :gen_tcp.send(sock, msg),
