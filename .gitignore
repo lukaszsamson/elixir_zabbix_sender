@@ -23,3 +23,4 @@ erl_crash.dump
 zabbix_sender-*.tar
 
 .elixir_ls
+/priv/plts/
