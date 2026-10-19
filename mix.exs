@@ -22,11 +22,12 @@ defmodule ZabbixSender.MixProject do
         source_url: @source_url
       ],
       dialyzer: [
+        plt_local_path: "priv/plts",
+        plt_core_path: "priv/plts",
         flags: [
           # :unmatched_returns,
           :unknown,
-          :error_handling,
-          :race_conditions
+          :error_handling
           # :underspecs
         ]
       ]
